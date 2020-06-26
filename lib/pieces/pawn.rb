@@ -11,37 +11,21 @@ class Pawn < Piece
   
   def valid_move(new_rank, new_file, grid)
     return true if @en_passant
-    return false if (new_rank - rank).abs > 2 || (new_file - file).abs > 1
-    return false if file == 0 && new_file == 7 || file == 7 && new_file == 0
     return false if (new_rank < 0 || new_rank > 7) || (new_file < 0 || new_file > 7)
+    return false if grid[new_rank][new_file].color == color 
+    
     rank_dist = (new_rank - rank).abs
     obstructed = pawn_obstruction(new_rank, new_file, grid)
-    if color == "black" && new_rank < rank
-      return true if capture_diag("black", grid, new_rank, new_file)
-      if rank == 6 && !obstructed
-        return false if new_rank == 4 && !grid[new_rank][new_file].color.nil?
+    color == "white" ? start_rank = 1 : start_rank = 6
+    color == "white" ? moves_forward = new_rank > rank : moves_forward = new_rank < rank
+
+    if moves_forward
+      return true if capture_diag(color, grid, new_rank, new_file)
+      if start_rank && !obstructed
+        return false if rank_dist == 2 && grid[new_rank][new_file].class != Tile
         (rank_dist <= 2 || rank_dist <= 1) && new_file == file ? true : false
       elsif !obstructed
         rank_dist <= 1 && new_file == file ? true : false
-      else
-        return false
-      end
-    elsif color == "white" && new_rank > rank
-      return false if (new_rank - rank).abs > 2 || (new_file - file).abs > 1
-      return true if capture_diag("white", grid, new_rank, new_file)
-      if rank == 1 && !obstructed 
-        return false if new_rank == 3 && !grid[new_rank][new_file].color.nil?
-        if (rank_dist <= 2 || rank_dist <= 1) && new_file == file
-          return true
-        else
-          return false
-        end 
-      elsif !obstructed
-        if rank_dist <= 1 && new_file == file 
-          return true
-        else
-          return false
-        end
       else
         return false
       end
@@ -51,17 +35,11 @@ class Pawn < Piece
   end
 
   def capture_diag(color, grid, new_rank, new_file)
-    if color == "white" && new_rank == rank + 1
+    return false if file == 0 && new_file == 7 || file == 7 && new_file == 0
+    color == "white" ? diag = new_rank == rank + 1 : diag = new_rank == rank - 1
+    if diag
       if new_file == file + 1 || new_file == file - 1
-        return true if grid[new_rank][new_file].class != Tile && !grid[new_rank][new_file].nil?
-      else
-        return false
-      end
-    elsif color == "black" && new_rank == rank - 1
-      if new_file == file + 1 || new_file == file - 1
-        return true if grid[new_rank][new_file].class != Tile && !grid[new_rank][new_file].nil?
-      else
-        return false
+        grid[new_rank][new_file].class != Tile ? true : false
       end
     else
       return false
@@ -70,14 +48,9 @@ class Pawn < Piece
 
   def pawn_obstruction(new_rank, new_file, grid)  
     i = 1
-    next_rank = rank + i
-  
+    rank < new_rank ? next_rank = rank + i : next_rank = rank - i 
     while i <= (new_rank - rank).abs 
-      if rank < new_rank
-        return true if grid[next_rank][file].color != nil 
-      else
-        return true if grid[rank - i][file].color != nil 
-      end
+      grid[next_rank][file].class != Tile ? true : false 
       i += 1
     end
     return false

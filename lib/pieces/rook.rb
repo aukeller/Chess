@@ -12,9 +12,9 @@ class Rook < Piece
     return false if grid[new_rank][new_file].color == color 
     return false if (new_rank < 0 || new_rank > 7) || (new_file < 0 || new_file > 7)
     if !rook_obstruction(new_rank, new_file, grid)
-      return true if (new_file == file ||  new_rank == rank) 
+      (new_file == file ||  new_rank == rank) ? true : false
+    else
       return false
     end
-    return false
   end
 end
