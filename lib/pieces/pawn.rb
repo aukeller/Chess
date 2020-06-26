@@ -1,5 +1,4 @@
 require_relative 'piece'
-require_relative 'obstruction.rb'
 require_relative 'tile'
 
 class Pawn < Piece
@@ -67,6 +66,21 @@ class Pawn < Piece
     else
       return false
     end
+  end
+
+  def pawn_obstruction(new_rank, new_file, grid)  
+    i = 1
+    next_rank = rank + i
+  
+    while i <= (new_rank - rank).abs 
+      if rank < new_rank
+        return true if grid[next_rank][file].color != nil 
+      else
+        return true if grid[rank - i][file].color != nil 
+      end
+      i += 1
+    end
+    return false
   end
 
 end
