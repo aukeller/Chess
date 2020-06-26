@@ -23,44 +23,47 @@ class Board
   end
 
   def pawn_promotion?(piece, new_rank, new_file)
-    if piece.class == Pawn && piece.rank == 7
-      puts "choose promotion: rook, bishop, queen, knight"
-      choice = gets.chomp.downcase
-      if choice == "rook"
-        grid[new_rank][new_file] = Rook.new(piece.color, new_rank, new_file)
-      elsif choice == "bishop"
-        grid[new_rank][new_file] = Bishop.new(piece.color, new_rank, new_file)
-      elsif choice == "queen"
-        grid[new_rank][new_file] = Queen.new(piece.color, new_rank, new_file)
-      elsif choice == "knight"
-        grid[new_rank][new_file] = Knight.new(piece.color, new_rank, new_file)
-      else
-        puts "invalid promotion, try again"
-        pawn_promotion?(piece)
-      end
-    end 
+    return true if piece.class == Pawn && (piece.rank == 7 || piece.rank == 0) 
   end
 
-  def king_rook_move?(piece)
-    if (piece.class == King || piece.class == Rook) 
-      if piece.color == "white" 
-        @white_king_rook_move = true
-      elsif piece.color == "black"
-        @black_king_rook_move = true
-      end
+  def get_pawn_promotion(piece, new_rank, new_file)
+    puts "choose promotion: rook, bishop, queen, knight"
+    choice = gets.chomp.downcase
+    if choice == "rook"
+      grid[new_rank][new_file] = Rook.new(piece.color, new_rank, new_file)
+    elsif choice == "bishop"
+      grid[new_rank][new_file] = Bishop.new(piece.color, new_rank, new_file)
+    elsif choice == "queen"
+      grid[new_rank][new_file] = Queen.new(piece.color, new_rank, new_file)
+    elsif choice == "knight"
+      grid[new_rank][new_file] = Knight.new(piece.color, new_rank, new_file)
+    else
+      puts "invalid promotion, try again"
+      get_pawn_promotion(piece, new_rank, new_file)
     end
+  end
+
+
+  def king_rook_move?(piece)
+    return true if (piece.class == King || piece.class == Rook) 
   end 
 
   def move(rank, file, new_rank, new_file)
     piece = grid[rank][file]
     if !piece.nil? && piece.valid_move(new_rank, new_file, grid)
-      king_rook_move?(piece)
+      if king_rook_move?(piece) 
+        piece.color == "white" ? @white_king_rook_move = true : @black_king_rook_move = true
+      end
       new_tile = grid[new_rank][new_file]
-      @killed << new_tile.symbol if !new_tile.nil?
-      piece.rank, piece.file  = new_rank, new_file
+      @killed << new_tile.symbol if new_tile.class != Tile
+      piece.rank, piece.file = new_rank, new_file
       grid[new_rank][new_file] = grid[rank][file]
-      pawn_promotion?(piece, new_rank, new_file)
-      grid[rank][file] = Tile.new  
+      if pawn_promotion?(piece, new_rank, new_file)
+        get_pawn_promotion(piece, new_rank, new_file)
+        grid[rank][file] = Tile.new
+      else
+        grid[rank][file] = Tile.new
+      end  
     else
       puts "not a valid move"
       return false
