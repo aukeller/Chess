@@ -9,8 +9,7 @@ class Queen < Piece
   end  
 
   def valid_move(new_rank, new_file, grid)
-    return false if (new_rank < 0 || new_rank > 7) || (new_file < 0 || new_file > 7)
-    return false if grid[new_rank][new_file].color == color 
+    return super
     if (new_file == file || new_rank == rank) && !rook_obstruction(new_rank, new_file, grid) 
       return true
     elsif (new_file - file).abs == (new_rank - rank).abs && !bishop_obstruction(new_rank, new_file, grid)
@@ -19,4 +18,5 @@ class Queen < Piece
       return false
     end
   end
+
 end
