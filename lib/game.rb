@@ -70,50 +70,36 @@ class Game
     board.move(pair[0], pair[1], pair[2], pair[3] - i)
     board.move(pair[0], pair[3] - i, pair[2], pair[3])
     if pair[3] > pair[1]
-      board.grid[0][7] = Tile.new
-      board.grid[0][5] = Rook.new(color, rank, 5)
+      board.grid[0][7], board.grid[0][5] = Tile.new, Rook.new(color, rank, 5)  
     else
-      board.grid[0][0] = Tile.new
-      board.grid[0][3] = Rook.new(color, rank, 3)
+      board.grid[0][0], board.grid[0][3] = Tile.new, Rook.new(color, rank, 3)
     end
   end
 
   def en_passant_attempt(piece, new_rank, new_file)
-    if piece.color == "black"
-      return false if @white_pawn_move_two.nil? 
-      if @white_pawn_move_two.rank == piece.rank && @white_pawn_move_two.file == piece.file + 1 ||  @white_pawn_move_two.file == piece.file - 1
-        return true if new_rank == piece.rank - 1 && new_file == @white_pawn_move_two.file
-      else
-        return false
+    piece.color == "black" ? pawn_move_two = @white_pawn_move_two : pawn_move_two = @black_pawn_move_two
+    piece.color == "black" ? i = 1: i = -1
+    return false if pawn_move_two.nil? 
+      if pawn_move_two.rank == piece.rank && pawn_move_two.file == piece.file + 1 || pawn_move_two.rank == piece.rank && pawn_move_two.file == piece.file - 1
+        new_rank == piece.rank - i && new_file == pawn_move_two.file ? true : false
       end
-    else
-      return false if @black_pawn_move_two.nil?
-      if @black_pawn_move_two.rank == piece.rank && (@black_pawn_move_two.file == piece.file + 1 ||  @black_pawn_move_two.file == piece.file - 1)
-        return true if new_rank == piece.rank + 1 && new_file == @black_pawn_move_two.file
-      else
-        return false
-      end
-    end
     return false
   end
 
   def en_passant(piece)
     piece.en_passant = true
-    if piece.color == "black"
-      board.move(piece.rank, piece.file, @white_pawn_move_two.rank - 1, @white_pawn_move_two.file)
-      board.killed << board.grid[@white_pawn_move_two.rank][@white_pawn_move_two.file].symbol
-      board.grid[@white_pawn_move_two.rank][@white_pawn_move_two.file] = Tile.new
-    else
-      board.move(piece.rank, piece.file, @black_pawn_move_two.rank + 1, @black_pawn_move_two.file)
-      board.killed << board.grid[@black_pawn_move_two.rank][@black_pawn_move_two.file].symbol
-      board.grid[@black_pawn_move_two.rank][@black_pawn_move_two.file] = Tile.new
-    end
+    i = 1
+    piece.color == "white" ? pawn_move_two = @black_pawn_move_two : pawn_move_two = @white_pawn_move_two
+    piece.color == "white" ? i = 1 : i = -1
+    board.move(piece.rank, piece.file, pawn_move_two.rank + i, pawn_move_two.file)
+    board.killed << board.grid[pawn_move_two.rank][pawn_move_two.file].symbol
+    board.grid[pawn_move_two.rank][pawn_move_two.file] = Tile.new
   end
       
-  def turn(white_turn) 
+  def turn 
     until checkmate("white", board) || checkmate("black", board)
       board.display
-      white_turn == true ? color = "white" : color = "black"
+      @white_turn == true ? color = "white" : color = "black"
       pair = get_move(color)
       piece = board.grid[pair[0]][pair[1]]
       if piece.class == Pawn && (pair[0] - pair[2]).abs == 2
@@ -136,9 +122,20 @@ class Game
           next
         end
       end   
-      white_turn == true ? white_turn = false : white_turn = true
+      @white_turn == true ? @white_turn = false : @white_turn = true
     end 
+  end
+
+  def start
+
+  end
+
+  def save
+  end
+
+  def load
+
   end
 end
 game = Game.new
-game.turn(game.white_turn)
+game.turn

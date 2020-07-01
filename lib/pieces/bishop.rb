@@ -1,4 +1,5 @@
 require_relative 'piece'
+require_relative 'obstruction'
 
 class Bishop < Piece
   attr_accessor :symbol
