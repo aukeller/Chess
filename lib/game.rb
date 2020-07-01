@@ -1,14 +1,24 @@
 require_relative 'board.rb'
 require_relative 'rules.rb'
+require 'yaml'
 
 include Rules
 class Game
   attr_accessor :board, :white_turn
   def initialize
-    @board = Board.new
     @white_turn = true
     @white_pawn_move_two = nil
     @black_pawn_move_two = nil
+  end
+
+  def start
+    print "enter 'load' to load game, otherwise enter 'y' to start: "
+    if gets.chomp.downcase == 'load'
+      board = load
+    else
+      board = Board.new
+    end
+    turn(board)
   end
 
   def convert(pos, new_pos)
@@ -19,9 +29,10 @@ class Game
     return pair
   end
 
-  def get_move(color)
+  def get_move(color, board)
     puts "#{color}, what is your move?"
     pair = gets.chomp.split
+    save(board) if pair.join == "save"
     if pair[0].class != String || pair[0].length != 2
       puts "not valid input"
       get_move(color)
@@ -35,7 +46,7 @@ class Game
     end
   end
 
-  def castle_attempt(color, piece, new_file)
+  def castle_attempt(color, piece, new_file, board)
     color == "white" ? king_rook_move = board.white_king_rook_move : king_rook_move = board.black_king_rook_move
     color == "white" ? rank = 0 : rank = 7
     if !king_rook_move && !in_check(color, board)
@@ -63,7 +74,7 @@ class Game
     end
   end
 
-  def castle(color, pair)
+  def castle(color, pair, board)
     i = 1
     color == "white" ? rank = 0 : rank = 7
     pair[3] > pair[1] ? i = 1 : i = -1
@@ -76,7 +87,7 @@ class Game
     end
   end
 
-  def en_passant_attempt(piece, new_rank, new_file)
+  def en_passant_attempt(piece, new_rank, new_file, board)
     piece.color == "black" ? pawn_move_two = @white_pawn_move_two : pawn_move_two = @black_pawn_move_two
     piece.color == "black" ? i = 1: i = -1
     return false if pawn_move_two.nil? 
@@ -86,7 +97,7 @@ class Game
     return false
   end
 
-  def en_passant(piece)
+  def en_passant(piece, board)
     piece.en_passant = true
     i = 1
     piece.color == "white" ? pawn_move_two = @black_pawn_move_two : pawn_move_two = @white_pawn_move_two
@@ -96,20 +107,20 @@ class Game
     board.grid[pawn_move_two.rank][pawn_move_two.file] = Tile.new
   end
       
-  def turn 
+  def turn(board) 
     until checkmate("white", board) || checkmate("black", board)
       board.display
       @white_turn == true ? color = "white" : color = "black"
-      pair = get_move(color)
+      pair = get_move(color, board)
       piece = board.grid[pair[0]][pair[1]]
       if piece.class == Pawn && (pair[0] - pair[2]).abs == 2
         piece.color == "white" ? @white_pawn_move_two = piece : @black_pawn_move_two = piece
       end
-      if piece.class == Pawn && en_passant_attempt(piece, pair[2], pair[3])
-        en_passant(piece)
+      if piece.class == Pawn && en_passant_attempt(piece, pair[2], pair[3], board)
+        en_passant(piece, board)
         piece.en_passant = false
-      elsif piece.class == King && castle_attempt(color, piece, pair[3])
-        castle(color, pair)
+      elsif piece.class == King && castle_attempt(color, piece, pair[3], board)
+        castle(color, pair, board)
       elsif !piece.valid_move(pair[2], pair[3], board.grid)
         puts "not a valid move"
         next
@@ -126,16 +137,25 @@ class Game
     end 
   end
 
-  def start
-
-  end
-
-  def save
+  def save(board)
+    print "What is your file name?: "
+    file_name = gets.chomp
+    File.open("../save/#{file_name}.yml", "w") {|f| f.write(board.to_yaml)}
+    puts "Your game has been saved!"
+    exit
   end
 
   def load
-
+    board = begin
+    print "Enter the name of your saved file: "
+    file_name = gets.chomp
+      YAML.load(File.open("../save/#{file_name}.yml"))
+    rescue ArgumentError => e
+      puts "Could not parse YAML: #{e.message}"
+    end
+    board
   end
+
 end
 game = Game.new
-game.turn
+game.start
