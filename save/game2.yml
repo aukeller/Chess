@@ -1,0 +1,230 @@
+--- !ruby/object:Board
+grid:
+- - !ruby/object:Rook
+    color: white
+    rank: 0
+    file: 0
+    symbol: "♖"
+  - !ruby/object:Knight
+    color: white
+    rank: 0
+    file: 1
+    symbol: "♘"
+  - !ruby/object:Bishop
+    color: white
+    rank: 0
+    file: 2
+    symbol: "♗"
+  - !ruby/object:Queen
+    color: white
+    rank: 0
+    file: 3
+    symbol: "♕"
+  - !ruby/object:King
+    color: white
+    rank: 0
+    file: 4
+    symbol: "♔"
+  - !ruby/object:Bishop
+    color: white
+    rank: 0
+    file: 5
+    symbol: "♗"
+  - !ruby/object:Knight
+    color: white
+    rank: 0
+    file: 6
+    symbol: "♘"
+  - !ruby/object:Rook
+    color: white
+    rank: 0
+    file: 7
+    symbol: "♖"
+- - !ruby/object:Tile
+    color: 
+    symbol: " "
+  - !ruby/object:Pawn
+    color: white
+    rank: 1
+    file: 1
+    symbol: "♙"
+    en_passant: false
+  - !ruby/object:Pawn
+    color: white
+    rank: 1
+    file: 2
+    symbol: "♙"
+    en_passant: false
+  - !ruby/object:Pawn
+    color: white
+    rank: 1
+    file: 3
+    symbol: "♙"
+    en_passant: false
+  - !ruby/object:Tile
+    color: 
+    symbol: " "
+  - !ruby/object:Pawn
+    color: white
+    rank: 1
+    file: 5
+    symbol: "♙"
+    en_passant: false
+  - !ruby/object:Pawn
+    color: white
+    rank: 1
+    file: 6
+    symbol: "♙"
+    en_passant: false
+  - !ruby/object:Pawn
+    color: white
+    rank: 1
+    file: 7
+    symbol: "♙"
+    en_passant: false
+- - !ruby/object:Pawn
+    color: white
+    rank: 2
+    file: 0
+    symbol: "♙"
+    en_passant: false
+  - &1 !ruby/object:Tile
+    color: 
+    symbol: " "
+  - *1
+  - *1
+  - *1
+  - *1
+  - *1
+  - *1
+- - &2 !ruby/object:Tile
+    color: 
+    symbol: " "
+  - *2
+  - *2
+  - *2
+  - &5 !ruby/object:Pawn
+    color: white
+    rank: 3
+    file: 4
+    symbol: "♙"
+    en_passant: false
+  - *2
+  - *2
+  - *2
+- - &6 !ruby/object:Pawn
+    color: black
+    rank: 4
+    file: 0
+    symbol: "♟︎"
+    en_passant: false
+  - &3 !ruby/object:Tile
+    color: 
+    symbol: " "
+  - *3
+  - *3
+  - *3
+  - *3
+  - *3
+  - *3
+- - &4 !ruby/object:Tile
+    color: 
+    symbol: " "
+  - *4
+  - *4
+  - *4
+  - *4
+  - *4
+  - *4
+  - *4
+- - !ruby/object:Tile
+    color: 
+    symbol: " "
+  - !ruby/object:Pawn
+    color: black
+    rank: 6
+    file: 1
+    symbol: "♟︎"
+    en_passant: false
+  - !ruby/object:Pawn
+    color: black
+    rank: 6
+    file: 2
+    symbol: "♟︎"
+    en_passant: false
+  - !ruby/object:Pawn
+    color: black
+    rank: 6
+    file: 3
+    symbol: "♟︎"
+    en_passant: false
+  - !ruby/object:Pawn
+    color: black
+    rank: 6
+    file: 4
+    symbol: "♟︎"
+    en_passant: false
+  - !ruby/object:Pawn
+    color: black
+    rank: 6
+    file: 5
+    symbol: "♟︎"
+    en_passant: false
+  - !ruby/object:Pawn
+    color: black
+    rank: 6
+    file: 6
+    symbol: "♟︎"
+    en_passant: false
+  - !ruby/object:Pawn
+    color: black
+    rank: 6
+    file: 7
+    symbol: "♟︎"
+    en_passant: false
+- - !ruby/object:Rook
+    color: black
+    rank: 7
+    file: 0
+    symbol: "♜"
+  - !ruby/object:Knight
+    color: black
+    rank: 7
+    file: 1
+    symbol: "♞"
+  - !ruby/object:Bishop
+    color: black
+    rank: 7
+    file: 2
+    symbol: "♝"
+  - !ruby/object:Queen
+    color: black
+    rank: 7
+    file: 3
+    symbol: "♛"
+  - !ruby/object:King
+    color: black
+    rank: 7
+    file: 4
+    symbol: "♚"
+  - !ruby/object:Bishop
+    color: black
+    rank: 7
+    file: 5
+    symbol: "♝"
+  - !ruby/object:Knight
+    color: black
+    rank: 7
+    file: 6
+    symbol: "♞"
+  - !ruby/object:Rook
+    color: black
+    rank: 7
+    file: 7
+    symbol: "♜"
+killed: []
+white_king_rook_move: false
+black_king_rook_move: false
+white_pawn_move_two: *5
+black_pawn_move_two: *6
+white_turn: false
