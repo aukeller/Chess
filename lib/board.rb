@@ -3,7 +3,8 @@ require_relative 'rules.rb'
 
 include Rules
 class Board
-  attr_accessor :grid, :white_king_rook_move, :black_king_rook_move, :killed
+  attr_accessor :grid, :white_turn, :white_king_rook_move, :black_king_rook_move, 
+  :white_pawn_move_two, :black_pawn_move_two, :killed
   def initialize
     @grid = Array.new(8) {Array.new(8, Tile.new)}
     add_default(6, 7, "black")
@@ -11,6 +12,9 @@ class Board
     @killed = []
     @white_king_rook_move = false
     @black_king_rook_move = false
+    @white_pawn_move_two = nil
+    @black_pawn_move_two = nil
+    @white_turn = true
   end
 
 
@@ -48,11 +52,18 @@ class Board
     return true if (piece.class == King || piece.class == Rook) 
   end 
 
+  def pawn_move_two?(piece, new_rank)
+    return true if piece.class == Pawn && (new_rank - piece.rank).abs == 2
+  end
+
+
   def move(rank, file, new_rank, new_file)
     piece = grid[rank][file]
     if !piece.nil? && piece.valid_move(new_rank, new_file, grid)
       if king_rook_move?(piece) 
         piece.color == "white" ? @white_king_rook_move = true : @black_king_rook_move = true
+      elsif pawn_move_two?(piece, new_rank)
+        piece.color == "white" ? @white_pawn_move_two = piece : @black_pawn_move_two = piece
       end
       new_tile = grid[new_rank][new_file]
       @killed << new_tile.symbol if new_tile.class != Tile
