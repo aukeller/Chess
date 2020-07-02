@@ -84,7 +84,7 @@ def en_passant_attempt(piece, new_rank, new_file, board)
   piece.color == "black" ? i = 1: i = -1
   return false if pawn_move_two.nil? 
     if pawn_move_two.rank == piece.rank && pawn_move_two.file == piece.file + 1 || pawn_move_two.rank == piece.rank && pawn_move_two.file == piece.file - 1
-      new_rank == piece.rank - i && new_file == pawn_move_two.file ? true : false
+      return true if new_rank == piece.rank - i && new_file == pawn_move_two.file 
     end
   return false
 end
@@ -136,6 +136,9 @@ end
 
 def load
   board = begin
+  files = Dir.entries("/Users/school/the_odin_project/chess/save").select {|f| !File.directory? f}
+  puts "Saved Files: "
+  files.each {|file| puts file.delete_suffix('.yml')}
   print "Enter the name of your saved file: "
   file_name = gets.chomp
     YAML.load(File.open("../save/#{file_name}.yml"))
